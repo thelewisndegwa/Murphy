@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Murphy Merchants Auctioneers</title>
+    <title>Murphy Merchants Auctioneers | About Us</title>
+    <meta name="description" content="Learn about Murphy Merchants Auctioneers – our story, team, mission, vision, and core values. Excellence in auctioneering since 2004.">
+    <meta property="og:title" content="Murphy Merchants Auctioneers | About Us">
+    <meta property="og:description" content="Learn about Murphy Merchants Auctioneers – our story, team, mission, vision, and core values.">
+    <meta property="og:image" content="imgs/logo.png">
+    <meta property="og:url" content="">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style1.css">
     
@@ -25,36 +30,58 @@
         margin: 0;
         padding: 0;
     }
-    .container {
+    main.about-content {
+        width: 100%;
         max-width: 900px;
-        margin: 20px auto;
-        padding: 20px;
+        margin: 1rem auto;
+        padding: 1.5rem 2rem;
         border: 1px solid #ccc;
         border-radius: 5px;
         background-color: #f9f9f9;
+        box-sizing: border-box;
+        min-height: 0;
+        overflow: visible;
     }
-    h2, h3 {
+    main.about-content h2, main.about-content h3 {
         color: #333;
     }
-    p, li {
-        margin: 10px 0;
+    main.about-content h2 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
     }
-    ul {
+    main.about-content h2:first-child {
+        margin-top: 0;
+    }
+    main.about-content h3 {
+        margin-top: 0.75rem;
+        margin-bottom: 0.35rem;
+    }
+    main.about-content p, main.about-content li {
+        margin: 0.5rem 0;
+    }
+    main.about-content ul {
         padding-left: 20px;
     }
+    main.about-content a {
+        display: inline-block;
+        margin: 0.25rem 0;
+    }
     @media (max-width: 600px) {
-        .container {
-            padding: 10px;
+        main.about-content {
+            padding: 1rem 1.25rem;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
         }
     }
 </style>
 </head>
 <body>
-
-  <nav>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <nav class="nav-bar">
+    <div class="nav-backdrop" aria-hidden="true"></div>
     <div class="logo">
         <a href="index.html"><img style="height: 100px; width: 100px;" src="imgs/logo.png" alt="logo"/></a>
-        <h4 class="logoName" style="text-align: center;">Murphy Merchants Auctioneers</h4>
+        <a href="index.html" class="logoName" style="text-align: center;">Murphy Merchants Auctioneers</a>
     </div>
     <ul class="nav-links">
         
@@ -78,28 +105,26 @@
     </li>
         
     </ul>
-    <div class="burger">
+    <button type="button" class="burger" aria-label="Open menu" aria-expanded="false">
         <div class="line1"></div>
         <div class="line2"></div>
         <div class="line3"></div>
-    </div>
+    </button>
 </nav>
 
 
-<div class="container">
+<main id="main-content" class="about-content">
   <h2>About Us</h2>
   <h3>Our Story</h3>
-  <p>M/S Murphy Merchants Auctioneers has been a trusted name in auctioneering since 2004. Our firm is led by Mr. Evans M. Maabi, a seasoned professional with over 20 years of experience in the field. Our team includes four field officers and two office staff, all dedicated to providing reliable and efficient auctioneering services.
-<br> 
-    <a href="Companyprofile.html" style="margin-bottom: 15px;">Our Company Profile</a>
-  </p>
+  <p>M/S Murphy Merchants Auctioneers has been a trusted name in auctioneering since 2004. Our firm is led by Mr. Evans M. Maabi, a seasoned professional with over 20 years of experience in the field. Our team includes four field officers and two office staff, all dedicated to providing reliable and efficient auctioneering services.</p>
+  <p><a href="Companyprofile.html">Our Company Profile</a></p>
 
   <h3>Our Team</h3>
   <p><strong>Evans M. Maabi:</strong> Proprietor and General Manager</p>
   <p><strong>Field Officers:</strong> 4 experienced professionals</p>
   <p><strong>Office Staff:</strong> Secretary cum receptionist and office clerk</p>
 
-  <a href="contactus.html" style="margin-bottom: 15px;">Contact Us</a>
+  <a href="contactus.html">Contact Us</a>
 
   <h2>Why Choose Murphy Merchants Auctioneers?</h2>
   <h3>Expertise</h3>
@@ -133,24 +158,16 @@
       <li>Fairness, Courtesy, and Respect</li>
       <li>Clear Communication</li>
   </ul>
-</div>
-
-
-
+</main>
 
   <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa fa-arrow-circle-up" style="font-size:36px;color: rgb(46, 206, 46) "></i></button>
-
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
-
-
 
 <footer id="footer">
 
   <div class="container__footer">
       <div class="box__footer">
           <div class="logo">
-              <img src="imgs/logo.png" style="height: 300px; width: 300px;" alt="logo">
+              <img class="footer__logo" src="imgs/logo.png" alt="Murphy Merchants Auctioneers logo">
           </div>
           
       </div>
@@ -172,7 +189,7 @@
 
       <div class="box__footer">
           <h2>Social Media</h2>
-          <a href="https://www.facebook.com" target="_blank"> <i class="fab fa-facebook-square"></i> Facebook</a>
+          <a href="#" aria-label="Facebook (Coming soon)"><i class="fab fa-facebook-square"></i> Facebook (Coming soon)</a>
           
       </div>
 
@@ -181,10 +198,10 @@
   <div class="box__copyright">
       <hr>
      
-      <p>Murphy Merchants Auctioneers © 2024 | All Rights Reserved</p>
+      <p>Murphy Merchants Auctioneers © 2025 | All Rights Reserved</p>
   </div>
 </footer>
 
-<script src="app1.js"></script>
+<script src="main.js"></script>
 </body>
 </html>

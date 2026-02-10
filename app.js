@@ -4,13 +4,12 @@ const navSlide = () => {
   const navLinks = document.querySelectorAll('.nav-links li');
 
   burger.addEventListener('click', () => {
-      // Toggle Nav
-      nav.classList.toggle('nav-active');
+      const isOpen = nav.classList.toggle('nav-active');
+      burger.setAttribute('aria-expanded', isOpen);
+      burger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
       
-      // Toggle body scroll (optional, to prevent scrolling when the menu is open)
-      document.body.classList.toggle('no-scroll');
+      document.body.classList.toggle('no-scroll', isOpen);
 
-      // Animate links
       navLinks.forEach((link, index) => {
           if (link.style.animation) {
               link.style.animation = '';
@@ -19,8 +18,7 @@ const navSlide = () => {
           }
       });
 
-      // Burger Animation
-      burger.classList.toggle('toggle');
+      burger.classList.toggle('toggle', isOpen);
   });
 }
 
@@ -61,7 +59,7 @@ var swiper = new Swiper(".mySwiper", {
   });
 
 // Smooth scroll to the introduction section when clicking "Get Started"
-document.querySelectorAll('a[href^="#id_intro_container"]').forEach(link => {
+document.querySelectorAll('a[href^="#main-content"]').forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
   

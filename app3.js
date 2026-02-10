@@ -4,13 +4,11 @@ const navSlide = () => {
     const navLinks = document.querySelectorAll('.nav-links li');
   
     burger.addEventListener('click', () => {
-        // Toggle Nav
-        nav.classList.toggle('nav-active');
-        
-        // Toggle body scroll (optional, to prevent scrolling when the menu is open)
-        document.body.classList.toggle('no-scroll');
+        const isOpen = nav.classList.toggle('nav-active');
+        burger.setAttribute('aria-expanded', isOpen);
+        burger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+        document.body.classList.toggle('no-scroll', isOpen);
   
-        // Animate links
         navLinks.forEach((link, index) => {
             if (link.style.animation) {
                 link.style.animation = '';
@@ -18,9 +16,7 @@ const navSlide = () => {
                 link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.3}s`;
             }
         });
-  
-        // Burger Animation
-        burger.classList.toggle('toggle');
+        burger.classList.toggle('toggle', isOpen);
     });
   }
   

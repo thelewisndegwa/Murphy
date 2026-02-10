@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Murphy Merchants Auctioneers</title>
+    <title>Murphy Merchants Auctioneers | Company Profile</title>
+    <meta name="description" content="Company profile of Murphy Merchants Auctioneers – services, staff, major clients, and referees. Registered auctioneers in Kenya since 2004.">
+    <meta property="og:title" content="Murphy Merchants Auctioneers | Company Profile">
+    <meta property="og:description" content="Company profile of Murphy Merchants Auctioneers – services, staff, and clients.">
+    <meta property="og:image" content="imgs/logo.png">
+    <meta property="og:url" content="">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="give.css">
@@ -27,8 +32,8 @@
     }
     .profile-container {
         max-width: 900px;
-        margin: 20px auto;
-        padding: 20px;
+        margin: 1rem auto;
+        padding: 1.25rem 1.5rem;
         border: 1px solid #ccc;
         border-radius: 5px;
         background-color: #f9f9f9;
@@ -37,23 +42,25 @@
         color: #333;
     }
     p, li {
-        margin: 10px 0;
+        margin: 0.5rem 0;
     }
     ul {
         padding-left: 20px;
     }
     @media (max-width: 600px) {
         .profile-container {
-            padding: 10px;
+            padding: 1rem;
         }
     }
 </style>
 </head>
 <body>
-    <nav>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <nav class="nav-bar">
+        <div class="nav-backdrop" aria-hidden="true"></div>
         <div class="logo">
             <a href="index.html"><img style="height: 100px; width: 100px;" src="imgs/logo.png" alt="logo"/></a>
-            <h4 class="logoName" style="text-align: center;">Murphy Merchants Auctioneers</h4>
+            <a href="index.html" class="logoName" style="text-align: center;">Murphy Merchants Auctioneers</a>
         </div>
         <ul class="nav-links">
             
@@ -77,17 +84,17 @@
             </li>
 
         </ul>
-        <div class="burger">
+        <button type="button" class="burger" aria-label="Open menu" aria-expanded="false">
             <div class="line1"></div>
             <div class="line2"></div>
             <div class="line3"></div>
-        </div>
+        </button>
     </nav>
 
 
 
     
-    <div class="profile-container">
+    <main id="main-content" class="profile-container">
         <h2>Company Profile</h2>
         <h3>Background</h3>
         <p>M/S Murphy Merchants Auctioneers, registered on October 25, 2004, has grown to become a leading auctioneering firm in Kenya. Our proprietor, Mr. Evans M. Maabi, brings over 20 years of experience to the firm, ensuring top-notch services for our clients.</p>
@@ -166,7 +173,7 @@
         <div class="container__footer">
             <div class="box__footer">
                 <div class="logo">
-                    <img style="height: 350px; width: 350px;" src="imgs/logo.png" alt="logo">
+                    <img class="footer__logo" src="imgs/logo.png" alt="Murphy Merchants Auctioneers logo">
                 </div>
                 
             </div>
@@ -188,7 +195,7 @@
 
             <div class="box__footer">
                 <h2>Social Media</h2>
-                <a href="https://www.facebook.com" target="_blank"> <i class="fab fa-facebook-square"></i> Facebook</a>
+                <a href="#" aria-label="Facebook (Coming soon)"><i class="fab fa-facebook-square"></i> Facebook (Coming soon)</a>
                 
             </div>
 
@@ -197,9 +204,9 @@
         <div class="box__copyright">
             <hr>
            
-            <p>Murphy Merchants Auctioneers © 2024 | All Rights Reserved</p>
+            <p>Murphy Merchants Auctioneers © 2025 | All Rights Reserved</p>
         </div>
     </footer>
 
 
-<script src="app2.js"></script>
+<script src="main.js"></script>

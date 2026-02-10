@@ -1,12 +1,12 @@
 /* Design tokens – responsive & modern */
 :root {
-  --color-primary: #2ece2e;
-  --color-primary-dark: #22a022;
-  --color-primary-light: #5dd85d;
+  --color-primary: #1e40af;
+  --color-primary-dark: #1e3a8a;
+  --color-primary-light: #3b82f6;
   --color-text: #1f2937;
   --color-text-muted: #6b7280;
   --color-bg: #ffffff;
-  --color-bg-soft: #f8faf8;
+  --color-bg-soft: #f8fafc;
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
@@ -25,7 +25,7 @@ html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 body {
@@ -69,7 +69,7 @@ nav,
     min-height: clamp(60px, 10vh, 80px);
     padding: 0 clamp(1rem, 4vw, 2rem);
     background-color: var(--color-primary);
-    font-family: 'Syne', sans-serif;
+    font-family: 'Roboto', sans-serif;
     position: relative;
     z-index: 100;
     box-shadow: var(--shadow-sm);
@@ -569,7 +569,7 @@ header .container {
 footer {
   width: 100%;
   padding: clamp(2rem, 5vw, 3rem) 0;
-  background: linear-gradient(180deg, var(--color-bg-soft) 0%, #e8f0ea 100%);
+  background: linear-gradient(180deg, var(--color-bg-soft) 0%, #f1f5f9 100%);
   margin-top: 2rem;
 }
 
@@ -940,8 +940,8 @@ footer {
 }
 .bid-form__message.success {
   display: block;
-  background: #dcfce7;
-  color: #166534;
+  background: #dbeafe;
+  color: #1e40af;
 }
 .item-detail__back {
   display: inline-block;

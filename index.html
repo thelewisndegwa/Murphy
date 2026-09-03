@@ -1,216 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Murphy Merchants Auctioneers | Home</title>
-    <meta name="description" content="Murphy Merchants Auctioneers – trusted auctioneering services in Mombasa since 2004. General auctioneering, court broking, repossessions, and civil investigations.">
-    <meta property="og:title" content="Murphy Merchants Auctioneers | Home">
-    <meta property="og:description" content="Murphy Merchants Auctioneers – trusted auctioneering services in Mombasa since 2004.">
-    <meta property="og:image" content="imgs/Gemini_Generated_Image_5emv565emv565emv.png">
-    <meta property="og:url" content="">
-    <link rel="stylesheet" href="style.css">
-   
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-    </style>
-    <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"
-  />
-  <link rel="icon" type="image/png" href="imgs/Gemini_Generated_Image_5emv565emv565emv.png"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css" crossorigin="">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Murphy Merchants Auctioneers | Live Auctions</title>
+  <meta name="description" content="Browse current auction lots and place your bid. Murphy Merchants Auctioneers – trusted auctioneering in Mombasa since 2004.">
+  <meta property="og:title" content="Murphy Merchants Auctioneers | Live Auctions">
+  <meta property="og:description" content="Browse current auction lots and place your bid.">
+  <meta property="og:image" content="assets/images/logo.png">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-  <style>
-      body {
-        font-family: 'Roboto', sans-serif;
-        line-height: 1.6;
-        margin: 0;
-        padding: 0;
-    }
-  </style>
 </head>
 <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <nav class="nav-bar">
-        <div class="nav-backdrop" aria-hidden="true"></div>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <nav class="nav-bar">
+    <div class="nav-backdrop" aria-hidden="true"></div>
+    <div class="logo">
+      <a href="index.html"><img src="assets/images/logo.png" alt="Murphy Merchants Auctioneers logo"></a>
+      <a href="index.html" class="logoName">Murphy Merchants</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="is-active">Auctions</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="company-profile.html">Company Profile</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button type="button" class="burger" aria-label="Open menu" aria-expanded="false">
+      <div class="line1"></div>
+      <div class="line2"></div>
+      <div class="line3"></div>
+    </button>
+  </nav>
+
+  <header class="auction-hero">
+    <div class="auction-hero__media" aria-hidden="true">
+      <img src="https://images.pexels.com/photos/1170412/pexels-photo-1170412.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1920" alt="">
+    </div>
+    <div class="auction-hero__content">
+      <h1 class="auction-hero__brand">Murphy Merchants <span>Auctioneers</span></h1>
+      <p class="auction-hero__lede">Live lots from Mombasa’s trusted auction house — property, vehicles, and commercial assets since 2004.</p>
+      <div class="auction-hero__actions">
+        <a href="#auction-grid" class="btn btn--primary">Browse lots</a>
+        <a href="contact.html" class="btn btn--secondary">Ask a question</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="auction-section">
+    <div class="section-inner">
+      <div class="auction-section__header">
+        <h2>Current auctions</h2>
+        <p>Place a bid online or contact us for viewing.</p>
+      </div>
+
+      <div class="auction-grid" id="auction-grid">
+        <p class="auction-empty">Loading auctions…</p>
+      </div>
+    </div>
+  </main>
+
+  <button type="button" onclick="topFunction()" id="myBtn" title="Go to top" aria-label="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
+
+  <footer id="footer">
+    <div class="container__footer">
+      <div class="box__footer">
         <div class="logo">
-            <a href="index.html"><img style="height: 70px; width: auto; max-width: 260px;" src="imgs/Gemini_Generated_Image_5emv565emv565emv.png" alt="Murphy Merchants Auctioneers logo"/></a>
-            <a href="index.html" class="logoName" style="text-align: center;">Murphy Merchants Auctioneers</a>
+          <img class="footer__logo" src="assets/images/logo.png" alt="Murphy Merchants Auctioneers logo">
         </div>
-        <ul class="nav-links">
-            
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-            <li>
-                <a href="auctions.html">Auctions</a>
-            </li>
-            <li>
-                <a href="about_us.html">About Us</a>
-            </li>
-            <!-- <li>
-                <a href="whyus.html">Why Us?</a>
-            </li> -->
-            <!-- <li>
-                <a href="ourvalues.html">Our Values</a>
-            </li> -->
-            <li>
-                <a href="Companyprofile.html">Company Profile</a>
-            </li>
-            <li>
-                <a href="contactus.html">Contact Us</a>
-            </li>
-            
-        </ul>
-        <button type="button" class="burger" aria-label="Open menu" aria-expanded="false">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
-        </button>
-    </nav>
-    <header>
-        <div class="container hero-container swiper mySwiper">
-            <div class="content swiper-wrapper">
-                <!-- <div class="slides swiper-slide">
-                    <img src="imgs/istockphoto-1213252343-612x612.jpg" alt="">
-                    <div class="img_overlay">
-                        <p>Welcome to</p>
-                        <h2>Murphy Merchants Auctioneers</h2>
-                        <a href="#main-content">Learn More</a>
-                    </div>
-                </div> -->
-                <div class="slides swiper-slide">
-                    <img src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1920" alt="Professional team in modern office" loading="lazy">
-                    <div class="img_overlay">
-                        <p>Welcome to</p>
-                        <h2>Murphy Merchants Auctioneers</h2>
-                        <div class="img_overlay_btns">
-                            <a href="auctions.html" class="img_overlay_cta_primary">Browse Auctions</a>
-                            <a href="#main-content" class="img_overlay_cta_secondary">Learn More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="slides swiper-slide">
-                    <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1920" alt="Team collaboration in modern workspace" loading="lazy">
-                    <div class="img_overlay">
-                        <p>Welcome to</p>
-                        <h2>Murphy Merchants Auctioneers</h2>
-                        <div class="img_overlay_btns">
-                            <a href="auctions.html" class="img_overlay_cta_primary">Browse Auctions</a>
-                            <a href="#main-content" class="img_overlay_cta_secondary">Learn More</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="slides swiper-slide">
-                    <img src="https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1920" alt="Business handshake and professionalism" loading="lazy">
-                    <div class="img_overlay">
-                        <p>Welcome to</p>
-                        <h2>Murphy Merchants Auctioneers</h2>
-                        <div class="img_overlay_btns">
-                            <a href="auctions.html" class="img_overlay_cta_primary">Browse Auctions</a>
-                            <a href="#main-content" class="img_overlay_cta_secondary">Learn More</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="swiper-button-next btn"></div>
-            <div class="swiper-button-prev btn"></div>
-            <div class="swiper-pagination"></div>
-        </div>
-    </header>
+      </div>
+      <div class="box__footer">
+        <h2>Contact</h2>
+        <p>P.O. Box 3070-80100</p>
+        <p>Mombasa</p>
+        <b>Mobile</b>
+        <p>0732 890 305 · 0736 670 986</p>
+        <b>Email</b>
+        <p>Murphyauctions22@gmail.com</p>
+      </div>
+      <div class="box__footer">
+        <h2>Quick links</h2>
+        <a href="index.html">Auctions</a>
+        <a href="about.html">About</a>
+        <a href="company-profile.html">Company Profile</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div class="box__footer">
+        <h2>Social</h2>
+        <a href="#" aria-label="Facebook coming soon"><i class="fab fa-facebook-square" aria-hidden="true"></i> Facebook (soon)</a>
+      </div>
+    </div>
+    <div class="box__copyright">
+      <hr>
+      <p>Murphy Merchants Auctioneers © 2026 · All rights reserved</p>
+    </div>
+  </footer>
 
-    <main id="main-content" class="intro_container">
-        <div class="intro_image_container">
-            <img src="imgs/Gemini_Generated_Image_5emv565emv565emv.png" class="intro_logo" alt="Murphy Merchants Auctioneers logo">
-        </div>
-            <h4 class="intro_heading">Introduction</h4>
-           
-       
-        <div class="intro_paragraph_container">
-            <p>M/S Murphy Merchants Auctioneers was established on October 25, 2004, with a clear strategic direction focused on client satisfaction. Our proprietor, Mr. Evans M. Maabi, has extensive experience in the auctioneering field and leads our team with a commitment to excellence and integrity.
-                </p>
-               
-               
-                 <a href="about_us.html">Learn More</a>
-                 <a href="auctions.html" class="intro_cta_auctions">View Live Auctions</a>
-        </div>
-        
-    </main>
-
-    <section class="visit-us">
-        <div class="section-inner">
-            <h2>Visit Our Office</h2>
-            <p>Welcome to our offices at the ASHA Trust Building, Meru Road, Mombasa. We invite you to visit us for personalized consultations and to learn more about our services.</p>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5547.906412661405!2d39.66957649619072!3d-4.062332265884409!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18401321d4cc88db%3A0xe060f735310ae4df!2sMeru%20Rd%2C%20Mombasa!5e0!3m2!1sen!2ske!4v1719244729790!5m2!1sen!2ske" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-    </section>
-
-    <section class="service-time">
-        <div class="section-inner">
-            <h2>Our Business Hours</h2>
-            <div class="service-boxes">
-                <div class="service-box">
-                    <i class="far fa-clock fa-3x"></i>
-                    <h3>8:30 AM - 5:00 PM</h3>
-                    <h4>Monday to Friday</h4>
-                </div>
-                <div class="service-box">
-                    <i class="far fa-clock fa-3x"></i>
-                    <h3>Optional</h3>
-                    <h4>Saturday</h4>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa fa-arrow-circle-up" style="font-size:36px;color: #1e40af"></i></button>
-
-    <footer id="footer">
-        <div class="container__footer">
-            <div class="box__footer">
-                <div class="logo">
-                    <img id="footer_logo" class="footer__logo" src="imgs/Gemini_Generated_Image_5emv565emv565emv.png" alt="Murphy Merchants Auctioneers logo">
-                </div>
-                
-            </div>
-            <div class="box__footer">
-                <h2>Contact Us</h2>
-                <p>P.O.BOX 3070-80100</p>
-                <p>MOMBASA</p>
-              <b>Mobile</b>  <p>0732890305 and 0736670986</p>
-              <b>Email</b>  <p>Murphyauctions22@gmail.com</p>
-            </div>
-
-            <div class="box__footer">
-                <h2>Quick Links</h2>
-                <a href="auctions.html">Auctions</a>
-                <a href="about_us.html">Mission</a>
-                <a href="about_us.html">Vision</a>
-                <a href="about_us.html">Core Values</a>
-                      
-            </div>
-
-            <div class="box__footer">
-                <h2>Social Media</h2>
-                <a href="#" aria-label="Facebook (Coming soon)"><i class="fab fa-facebook-square"></i> Facebook (Coming soon)</a>
-                
-            </div>
-
-        </div>
-
-        <div class="box__copyright">
-            <hr>
-           
-            <p>Murphy Merchants Auctioneers © 2026 | All Rights Reserved</p>
-        </div>
-    </footer>
-
-    
-
-    <script src="https://kit.fontawesome.com/41bcea2ae3.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-    <script src="main.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/auctions.js"></script>
 </body>
 </html>

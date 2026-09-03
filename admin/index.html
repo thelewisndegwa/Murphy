@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage auctions | Murphy Merchants</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="icon" type="image/png" href="/assets/images/logo.png">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <header class="admin-topbar">
+      <h1>Auctions</h1>
+      <div class="admin-topbar__actions">
+        <span id="admin-user" style="color:var(--color-text-muted);font-size:0.9rem"></span>
+        <a href="/admin/edit.html" class="btn btn--primary btn--sm">New lot</a>
+        <a href="/admin/bids.html" class="btn btn--ghost btn--sm">All bids</a>
+        <a href="/admin/records.html" class="btn btn--ghost btn--sm">Records</a>
+        <a href="/" class="btn btn--ghost btn--sm" target="_blank" rel="noopener noreferrer">View site</a>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn">Log out</button>
+      </div>
+    </header>
+
+    <div class="admin-table-wrap" id="table-wrap">
+      <p class="admin-empty" id="loading">Loading…</p>
+    </div>
+  </div>
+
+  <div class="admin-modal" id="closure-modal" hidden>
+    <div class="admin-modal__panel" role="dialog" aria-modal="true" aria-labelledby="closure-modal-title">
+      <h2 id="closure-modal-title">Record details</h2>
+      <p class="admin-modal__lede" id="closure-modal-lede"></p>
+      <form class="admin-form" id="closure-form">
+        <label for="closure-name">Name</label>
+        <input type="text" id="closure-name" name="partyName" required autocomplete="name">
+        <label for="closure-phone">Phone number</label>
+        <input type="tel" id="closure-phone" name="partyPhone" required autocomplete="tel">
+        <label for="closure-price">Price (KES)</label>
+        <input type="number" id="closure-price" name="price" min="0" step="1" required>
+        <div class="admin-form__actions">
+          <button type="submit" class="btn btn--primary">Save record</button>
+          <button type="button" class="btn btn--ghost" id="closure-cancel">Cancel</button>
+        </div>
+        <p class="admin-msg" id="closure-msg" role="status"></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  function requireAuth() {
+    return fetch('/api/admin/me', { credentials: 'same-origin' }).then(function (r) {
+      if (!r.ok) {
+        window.location.href = '/admin/login.html';
+        throw new Error('unauthorized');
+      }
+      return r.json();
+    });
+  }
+
+  function formatKes(n) {
+    return 'KES ' + Number(n || 0).toLocaleString('en-KE');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function render(lots) {
+    var wrap = document.getElementById('table-wrap');
+    if (!lots.length) {
+      wrap.innerHTML = '<p class="admin-empty">No auctions yet. <a href="/admin/edit.html">Add the first lot</a>.</p>';
+      return;
+    }
+
+    var rows = lots.map(function (lot) {
+      var bidCount = lot.bidCount || 0;
+      return (
+        '<tr data-id="' + lot.id + '">' +
+          '<td><img class="admin-table__thumb" src="' + escapeHtml(lot.photoPath) + '" alt=""></td>' +
+          '<td>' + escapeHtml(lot.title) + '</td>' +
+          '<td>' + formatKes(lot.currentBid) + '</td>' +
+          '<td><a href="/admin/bids.html?auctionId=' + lot.id + '">' + bidCount + ' bid' + (bidCount === 1 ? '' : 's') + '</a></td>' +
+          '<td>' + escapeHtml(formatDate(lot.endsAt)) + '</td>' +
+          '<td>' +
+            '<select class="status-select" data-id="' + lot.id + '" data-bid="' + lot.currentBid + '" data-title="' + escapeHtml(lot.title) + '" data-prev="' + escapeHtml(lot.status) + '" aria-label="Status for ' + escapeHtml(lot.title) + '">' +
+              '<option value="open"' + (lot.status === 'open' ? ' selected' : '') + '>Open</option>' +
+              '<option value="reserved"' + (lot.status === 'reserved' ? ' selected' : '') + '>Reserved</option>' +
+              '<option value="sold"' + (lot.status === 'sold' ? ' selected' : '') + '>Sold</option>' +
+            '</select>' +
+          '</td>' +
+          '<td class="admin-table__actions">' +
+            '<a class="btn btn--ghost btn--sm" href="/admin/bids.html?auctionId=' + lot.id + '">Bids</a>' +
+            '<a class="btn btn--ghost btn--sm" href="/admin/edit.html?id=' + lot.id + '">Edit</a>' +
+            '<button type="button" class="btn btn--danger btn--sm delete-btn" data-id="' + lot.id + '">Delete</button>' +
+          '</td>' +
+        '</tr>'
+      );
+    }).join('');
+
+    wrap.innerHTML =
+      '<table class="admin-table">' +
+        '<thead><tr><th>Photo</th><th>Title</th><th>Current</th><th>Bids</th><th>Ends</th><th>Status</th><th>Actions</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>';
+
+    wrap.querySelectorAll('.status-select').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var id = sel.getAttribute('data-id');
+        var next = sel.value;
+        var prev = sel.getAttribute('data-prev') || 'open';
+        if (next === 'open') {
+          fetch('/api/admin/auctions/' + id + '/status', {
+            method: 'PATCH',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'open' })
+          }).then(function (r) {
+            if (!r.ok) {
+              alert('Could not update status');
+              sel.value = prev;
+              return;
+            }
+            sel.setAttribute('data-prev', 'open');
+          });
+          return;
+        }
+        openClosureModal({
+          id: id,
+          kind: next,
+          title: sel.getAttribute('data-title') || '',
+          price: sel.getAttribute('data-bid') || '0',
+          onCancel: function () {
+            sel.value = prev;
+          },
+          onSaved: function () {
+            sel.setAttribute('data-prev', next);
+          }
+        });
+      });
+    });
+
+    wrap.querySelectorAll('.delete-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-id');
+        if (!confirm('Delete this auction lot?')) return;
+        fetch('/api/admin/auctions/' + id, {
+          method: 'DELETE',
+          credentials: 'same-origin'
+        }).then(function (r) {
+          if (!r.ok) {
+            alert('Delete failed');
+            return;
+          }
+          load();
+        });
+      });
+    });
+  }
+
+  function load() {
+    return fetch('/api/admin/auctions', { credentials: 'same-origin' })
+      .then(function (r) {
+        if (r.status === 401) {
+          window.location.href = '/admin/login.html';
+          return [];
+        }
+        return r.json();
+      })
+      .then(render);
+  }
+
+  var pendingClosure = null;
+  var modal = document.getElementById('closure-modal');
+  var closureForm = document.getElementById('closure-form');
+  var closureMsg = document.getElementById('closure-msg');
+
+  function closeClosureModal() {
+    modal.hidden = true;
+    pendingClosure = null;
+    closureMsg.className = 'admin-msg';
+    closureMsg.textContent = '';
+  }
+
+  function openClosureModal(opts) {
+    pendingClosure = opts;
+    document.getElementById('closure-modal-title').textContent =
+      opts.kind === 'sold' ? 'Mark as sold' : 'Mark as reserved';
+    document.getElementById('closure-modal-lede').textContent =
+      (opts.kind === 'sold' ? 'Sold' : 'Reserved') +
+      (opts.title ? ': ' + opts.title : '') +
+      '. Enter the buyer’s name, phone number, and price.';
+    document.getElementById('closure-name').value = '';
+    document.getElementById('closure-phone').value = '';
+    document.getElementById('closure-price').value = opts.price || '';
+    closureMsg.className = 'admin-msg';
+    closureMsg.textContent = '';
+    modal.hidden = false;
+    document.getElementById('closure-name').focus();
+  }
+
+  document.getElementById('closure-cancel').addEventListener('click', function () {
+    var onCancel = pendingClosure && pendingClosure.onCancel;
+    closeClosureModal();
+    if (onCancel) onCancel();
+  });
+
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) {
+      var onCancel = pendingClosure && pendingClosure.onCancel;
+      closeClosureModal();
+      if (onCancel) onCancel();
+    }
+  });
+
+  closureForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!pendingClosure) return;
+    var opts = pendingClosure;
+    fetch('/api/admin/auctions/' + opts.id + '/status', {
+      method: 'PATCH',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: opts.kind,
+        partyName: document.getElementById('closure-name').value.trim(),
+        partyPhone: document.getElementById('closure-phone').value.trim(),
+        price: document.getElementById('closure-price').value
+      })
+    })
+      .then(function (r) {
+        return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+      })
+      .then(function (res) {
+        if (!res.ok) {
+          closureMsg.className = 'admin-msg is-error';
+          closureMsg.textContent = res.d.error || 'Could not save record';
+          return;
+        }
+        var onSaved = opts.onSaved;
+        closeClosureModal();
+        if (onSaved) onSaved();
+      })
+      .catch(function () {
+        closureMsg.className = 'admin-msg is-error';
+        closureMsg.textContent = 'Could not reach the server';
+      });
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', function () {
+    fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' })
+      .finally(function () { window.location.href = '/admin/login.html'; });
+  });
+
+  requireAuth().then(function (me) {
+    document.getElementById('admin-user').textContent = me.username;
+    return load();
+  }).catch(function () {});
+})();
+  </script>
+</body>
+</html>

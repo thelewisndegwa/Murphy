@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bids | Murphy Merchants Admin</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="icon" type="image/png" href="/assets/images/logo.png">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <header class="admin-topbar">
+      <h1 id="page-title">Bids</h1>
+      <div class="admin-topbar__actions">
+        <a href="/admin/index.html" class="btn btn--ghost btn--sm">All auctions</a>
+        <a href="/admin/records.html" class="btn btn--ghost btn--sm">Records</a>
+        <a href="/" class="btn btn--ghost btn--sm" target="_blank" rel="noopener noreferrer">View site</a>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn">Log out</button>
+      </div>
+    </header>
+
+    <p id="lot-subtitle" style="color:var(--color-text-muted);margin:-0.75rem 0 1.25rem;font-size:0.95rem"></p>
+
+    <div class="admin-table-wrap" id="table-wrap">
+      <p class="admin-empty">Loading…</p>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var auctionId = params.get('auctionId');
+
+  function formatKes(n) {
+    return 'KES ' + Number(n || 0).toLocaleString('en-KE');
+  }
+
+  function formatDateTime(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso.includes('T') ? iso : iso.replace(' ', 'T') + 'Z');
+    if (isNaN(d.getTime())) {
+      d = new Date(iso);
+    }
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function render(bids, auctionTitle) {
+    var wrap = document.getElementById('table-wrap');
+    var sub = document.getElementById('lot-subtitle');
+
+    if (auctionTitle) {
+      document.getElementById('page-title').textContent = 'Bids';
+      sub.textContent = auctionTitle;
+    } else {
+      sub.textContent = 'All bids across auctions (newest first)';
+    }
+
+    if (!bids.length) {
+      wrap.innerHTML = '<p class="admin-empty">No bids yet' +
+        (auctionId ? ' for this lot' : '') + '.</p>';
+      return;
+    }
+
+    var rows = bids.map(function (bid, i) {
+      return (
+        '<tr>' +
+          '<td>' + (i + 1) + '</td>' +
+          (auctionId ? '' : '<td><a href="/admin/bids.html?auctionId=' + bid.auctionId + '">' + escapeHtml(bid.auctionTitle || ('Lot #' + bid.auctionId)) + '</a></td>') +
+          '<td>' + escapeHtml(bid.bidderName) + '</td>' +
+          '<td><a href="tel:' + escapeHtml(bid.bidderPhone) + '">' + escapeHtml(bid.bidderPhone) + '</a></td>' +
+          '<td><strong>' + formatKes(bid.amount) + '</strong></td>' +
+          '<td>' + escapeHtml(formatDateTime(bid.createdAt)) + '</td>' +
+        '</tr>'
+      );
+    }).join('');
+
+    wrap.innerHTML =
+      '<table class="admin-table">' +
+        '<thead><tr>' +
+          '<th>#</th>' +
+          (auctionId ? '' : '<th>Lot</th>') +
+          '<th>Name</th><th>Phone</th><th>Amount</th><th>Placed</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>';
+  }
+
+  document.getElementById('logout-btn').addEventListener('click', function () {
+    fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' })
+      .finally(function () { window.location.href = '/admin/login.html'; });
+  });
+
+  fetch('/api/admin/me', { credentials: 'same-origin' })
+    .then(function (r) {
+      if (!r.ok) {
+        window.location.href = '/admin/login.html';
+        throw new Error('unauthorized');
+      }
+      if (auctionId) {
+        return fetch('/api/admin/auctions/' + encodeURIComponent(auctionId) + '/bids', {
+          credentials: 'same-origin'
+        }).then(function (r2) {
+          return r2.json().then(function (d) {
+            if (!r2.ok) throw new Error(d.error || 'Failed');
+            return d;
+          });
+        }).then(function (data) {
+          render(data.bids || [], data.auction && data.auction.title);
+        });
+      }
+      return fetch('/api/admin/bids', { credentials: 'same-origin' })
+        .then(function (r2) { return r2.json(); })
+        .then(function (bids) { render(bids || []); });
+    })
+    .catch(function (err) {
+      if (err.message === 'unauthorized') return;
+      document.getElementById('table-wrap').innerHTML =
+        '<p class="admin-empty">Could not load bids.</p>';
+    });
+})();
+  </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit auction | Murphy Merchants</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="icon" type="image/png" href="/assets/images/logo.png">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <header class="admin-topbar">
+      <h1 id="page-title">New lot</h1>
+      <div class="admin-topbar__actions">
+        <a href="/admin/index.html" class="btn btn--ghost btn--sm">Back to list</a>
+        <a href="/admin/records.html" class="btn btn--ghost btn--sm">Records</a>
+      </div>
+    </header>
+
+    <form class="admin-form" id="lot-form" style="max-width:640px;background:var(--color-surface);padding:1.5rem;border-radius:var(--radius-lg);border:1px solid var(--color-border)">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="description">Description</label>
+      <textarea id="description" name="description" required></textarea>
+
+      <div class="form-row">
+        <div>
+          <label for="currentBid">Current bid (KES)</label>
+          <input type="number" id="currentBid" name="currentBid" min="0" step="1" required value="0">
+        </div>
+        <div>
+          <label for="endsAt">End date</label>
+          <input type="datetime-local" id="endsAt" name="endsAt">
+        </div>
+      </div>
+
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="open">Open</option>
+        <option value="reserved">Reserved</option>
+        <option value="sold">Sold</option>
+      </select>
+
+      <div id="closure-fields" hidden>
+        <p class="admin-form__hint">Record who this lot is reserved or sold to, and at what price.</p>
+        <label for="partyName">Name</label>
+        <input type="text" id="partyName" name="partyName" autocomplete="name">
+        <label for="partyPhone">Phone number</label>
+        <input type="tel" id="partyPhone" name="partyPhone" autocomplete="tel">
+        <label for="price">Price (KES)</label>
+        <input type="number" id="price" name="price" min="0" step="1">
+      </div>
+
+      <label for="photo">Photo <span id="photo-hint">(required)</span></label>
+      <img class="admin-preview" id="photo-preview" alt="" hidden>
+      <input type="file" id="photo" name="photo" accept="image/*">
+
+      <div class="admin-form__actions">
+        <button type="submit" class="btn btn--primary" id="save-btn">Save lot</button>
+        <a href="/admin/index.html" class="btn btn--ghost">Cancel</a>
+      </div>
+      <p class="admin-msg" id="form-msg" role="status"></p>
+    </form>
+  </div>
+
+  <script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var editId = params.get('id');
+  var isEdit = !!editId;
+  var originalStatus = 'open';
+  var msg = document.getElementById('form-msg');
+  var photoInput = document.getElementById('photo');
+  var preview = document.getElementById('photo-preview');
+  var statusSelect = document.getElementById('status');
+  var closureFields = document.getElementById('closure-fields');
+
+  if (isEdit) {
+    document.getElementById('page-title').textContent = 'Edit lot';
+    document.getElementById('photo-hint').textContent = '(leave blank to keep current)';
+    photoInput.removeAttribute('required');
+  } else {
+    photoInput.setAttribute('required', 'required');
+  }
+
+  function toLocalInput(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+      'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  function showMsg(text, ok) {
+    msg.className = 'admin-msg ' + (ok ? 'is-ok' : 'is-error');
+    msg.textContent = text;
+  }
+
+  function toggleClosureFields() {
+    var status = statusSelect.value;
+    var needsRecord = (status === 'reserved' || status === 'sold') && status !== originalStatus;
+    closureFields.hidden = !needsRecord;
+    document.getElementById('partyName').required = needsRecord;
+    document.getElementById('partyPhone').required = needsRecord;
+    document.getElementById('price').required = needsRecord;
+    if (needsRecord && !document.getElementById('price').value) {
+      document.getElementById('price').value = document.getElementById('currentBid').value || '';
+    }
+  }
+
+  statusSelect.addEventListener('change', toggleClosureFields);
+  toggleClosureFields();
+
+  photoInput.addEventListener('change', function () {
+    var file = photoInput.files && photoInput.files[0];
+    if (!file) return;
+    preview.src = URL.createObjectURL(file);
+    preview.hidden = false;
+  });
+
+  fetch('/api/admin/me', { credentials: 'same-origin' })
+    .then(function (r) {
+      if (!r.ok) {
+        window.location.href = '/admin/login.html';
+        throw new Error('unauthorized');
+      }
+      if (!isEdit) return null;
+      return fetch('/api/admin/auctions', { credentials: 'same-origin' })
+        .then(function (r2) { return r2.json(); })
+        .then(function (lots) {
+          var lot = lots.find(function (l) { return String(l.id) === String(editId); });
+          if (!lot) {
+            showMsg('Lot not found', false);
+            return;
+          }
+          document.getElementById('title').value = lot.title;
+          document.getElementById('description').value = lot.description;
+          document.getElementById('currentBid').value = lot.currentBid;
+          document.getElementById('endsAt').value = toLocalInput(lot.endsAt);
+          document.getElementById('status').value = lot.status;
+          originalStatus = lot.status;
+          toggleClosureFields();
+          if (lot.photoPath) {
+            preview.src = lot.photoPath;
+            preview.hidden = false;
+          }
+        });
+    })
+    .catch(function () {});
+
+  document.getElementById('lot-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    msg.className = 'admin-msg';
+
+    var fd = new FormData();
+    fd.append('title', document.getElementById('title').value.trim());
+    fd.append('description', document.getElementById('description').value.trim());
+    fd.append('currentBid', document.getElementById('currentBid').value);
+    fd.append('status', document.getElementById('status').value);
+    var ends = document.getElementById('endsAt').value;
+    if (ends) {
+      fd.append('endsAt', new Date(ends).toISOString());
+    } else {
+      fd.append('endsAt', '');
+    }
+    if (photoInput.files && photoInput.files[0]) {
+      fd.append('photo', photoInput.files[0]);
+    }
+
+    var status = document.getElementById('status').value;
+    if ((status === 'reserved' || status === 'sold') && status !== originalStatus) {
+      fd.append('partyName', document.getElementById('partyName').value.trim());
+      fd.append('partyPhone', document.getElementById('partyPhone').value.trim());
+      fd.append('price', document.getElementById('price').value);
+    }
+
+    var url = isEdit ? '/api/admin/auctions/' + editId : '/api/admin/auctions';
+    var method = isEdit ? 'PUT' : 'POST';
+
+    fetch(url, {
+      method: method,
+      credentials: 'same-origin',
+      body: fd
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok) {
+          showMsg(res.d.error || 'Save failed', false);
+          return;
+        }
+        window.location.href = '/admin/index.html';
+      })
+      .catch(function () {
+        showMsg('Could not reach server', false);
+      });
+  });
+})();
+  </script>
+</body>
+</html>

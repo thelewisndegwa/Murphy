@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Records | Murphy Merchants Admin</title>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/admin.css">
+  <link rel="icon" type="image/png" href="/assets/images/logo.png">
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <header class="admin-topbar">
+      <h1>Records</h1>
+      <div class="admin-topbar__actions">
+        <a href="/admin/index.html" class="btn btn--ghost btn--sm">Auctions</a>
+        <a href="/admin/bids.html" class="btn btn--ghost btn--sm">All bids</a>
+        <a href="/" class="btn btn--ghost btn--sm" target="_blank" rel="noopener noreferrer">View site</a>
+        <button type="button" class="btn btn--ghost btn--sm" id="logout-btn">Log out</button>
+      </div>
+    </header>
+
+    <p class="admin-lede">Sold and reserved lots, with the buyer’s name, phone number, and price.</p>
+
+    <div class="admin-filters" role="tablist" aria-label="Filter records">
+      <button type="button" class="admin-filter is-active" data-kind="" aria-pressed="true">All</button>
+      <button type="button" class="admin-filter" data-kind="sold" aria-pressed="false">Sold</button>
+      <button type="button" class="admin-filter" data-kind="reserved" aria-pressed="false">Reserved</button>
+    </div>
+
+    <div class="admin-table-wrap" id="table-wrap">
+      <p class="admin-empty">Loading…</p>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  var currentKind = '';
+
+  function formatKes(n) {
+    return 'KES ' + Number(n || 0).toLocaleString('en-KE');
+  }
+
+  function formatDateTime(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso.includes('T') ? iso : iso.replace(' ', 'T') + 'Z');
+    if (isNaN(d.getTime())) d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function kindLabel(kind) {
+    return kind === 'sold' ? 'Sold' : 'Reserved';
+  }
+
+  function render(records) {
+    var wrap = document.getElementById('table-wrap');
+    if (!records.length) {
+      wrap.innerHTML = '<p class="admin-empty">No records yet. Mark a lot as sold or reserved to add one.</p>';
+      return;
+    }
+
+    var rows = records.map(function (rec) {
+      var thumb = rec.photoPath
+        ? '<img class="admin-table__thumb" src="' + escapeHtml(rec.photoPath) + '" alt="">'
+        : '<span class="admin-table__thumb admin-table__thumb--empty"></span>';
+      var lotCell = rec.auctionId
+        ? '<a href="/admin/edit.html?id=' + rec.auctionId + '">' + escapeHtml(rec.auctionTitle) + '</a>'
+        : escapeHtml(rec.auctionTitle);
+      return (
+        '<tr>' +
+          '<td>' + thumb + '</td>' +
+          '<td>' + lotCell + '</td>' +
+          '<td><span class="kind-badge kind-badge--' + escapeHtml(rec.kind) + '">' + kindLabel(rec.kind) + '</span></td>' +
+          '<td>' + escapeHtml(rec.partyName) + '</td>' +
+          '<td><a href="tel:' + escapeHtml(rec.partyPhone) + '">' + escapeHtml(rec.partyPhone) + '</a></td>' +
+          '<td><strong>' + formatKes(rec.price) + '</strong></td>' +
+          '<td>' + escapeHtml(formatDateTime(rec.createdAt)) + '</td>' +
+        '</tr>'
+      );
+    }).join('');
+
+    wrap.innerHTML =
+      '<table class="admin-table">' +
+        '<thead><tr>' +
+          '<th>Photo</th><th>Lot</th><th>Type</th><th>Name</th><th>Phone</th><th>Price</th><th>Recorded</th>' +
+        '</tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+      '</table>';
+  }
+
+  function load() {
+    var wrap = document.getElementById('table-wrap');
+    wrap.innerHTML = '<p class="admin-empty">Loading…</p>';
+    var url = '/api/admin/records' + (currentKind ? '?kind=' + encodeURIComponent(currentKind) : '');
+    return fetch(url, { credentials: 'same-origin' })
+      .then(function (r) {
+        if (r.status === 401) {
+          window.location.href = '/admin/login.html';
+          return [];
+        }
+        if (!r.ok) throw new Error('Failed');
+        return r.json();
+      })
+      .then(function (rows) {
+        render(Array.isArray(rows) ? rows : []);
+      })
+      .catch(function () {
+        wrap.innerHTML = '<p class="admin-empty">Could not load records.</p>';
+      });
+  }
+
+  document.querySelectorAll('.admin-filter').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      currentKind = btn.getAttribute('data-kind') || '';
+      document.querySelectorAll('.admin-filter').forEach(function (other) {
+        var active = other === btn;
+        other.classList.toggle('is-active', active);
+        other.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      load();
+    });
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', function () {
+    fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' })
+      .finally(function () { window.location.href = '/admin/login.html'; });
+  });
+
+  fetch('/api/admin/me', { credentials: 'same-origin' })
+    .then(function (r) {
+      if (!r.ok) {
+        window.location.href = '/admin/login.html';
+        throw new Error('unauthorized');
+      }
+      return load();
+    })
+    .catch(function () {});
+})();
+  </script>
+</body>
+</html>
